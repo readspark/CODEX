@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --codex-primary: #312E81;
+  --codex-secondary: #7C3AED;
+  --codex-accent: #3B82F6;
+  --codex-bg: #F8FAFC;
+  --codex-surface: #FFFFFF;
+  --codex-text: #0F172A;
+  --codex-muted: #64748B;
+  --codex-success: #10B981;
+  --codex-warning: #F59E0B;
+  --codex-error: #EF4444;
+}
+
+.dark {
+  --codex-bg: #0F172A;
+  --codex-surface: #0F172A;
+  --codex-text: #FFFFFF;
+  --codex-muted: #64748B;
+}
+
+@layer base {
+  html {
+    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
+    background-color: var(--codex-bg);
+    color: var(--codex-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  html[data-text-size="standard"] {
+    font-size: 16px;
+  }
+  html[data-text-size="large"] {
+    font-size: 17.5px;
+  }
+  html[data-text-size="xl"] {
+    font-size: 19px;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Plus Jakarta Sans', 'DM Sans', system-ui, sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+
+  *:focus-visible {
+    outline: 2px solid #3B82F6;
+    outline-offset: 2px;
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Squircle geometry everywhere with native corner-shape support */
+.squircle-card {
+  border-radius: 20px;
+}
+.squircle-btn {
+  border-radius: 14px;
+}
+.squircle-tile {
+  border-radius: 26%;
+}
+.squircle-node {
+  border-radius: 30%;
+}
+
+@supports (corner-shape: squircle) {
+  .squircle-card {
+    corner-shape: squircle;
+    border-radius: 26px;
+  }
+  .squircle-btn {
+    corner-shape: squircle;
+    border-radius: 18px;
+  }
+  .squircle-tile {
+    corner-shape: squircle;
+    border-radius: 34%;
+  }
+  .squircle-node {
+    corner-shape: squircle;
+    border-radius: 44%;
+  }
+}
+
+html.reduce-motion *,
+html.reduce-motion *::before,
+html.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html:not(.force-motion) *,
+  html:not(.force-motion) *::before,
+  html:not(.force-motion) *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

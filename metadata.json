@@ -1,0 +1,6 @@
+{
+  "name": "CODEX",
+  "description": "Where Curiosity Becomes Code — Interactive computational thinking and coding learning universe.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

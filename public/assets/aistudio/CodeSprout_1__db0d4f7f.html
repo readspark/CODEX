@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>CodeSprout</title>
+<style>
+:root{--p:#047857;--s:#10B981;--a:#FBBF24;--bg:#F1F5F9;--sf:#FFFFFF;--tx:#0F172A;--t2:#64748B;--bd:#E2E8F0;--ok:#D1FAE5;--er:#FEF3C7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--sf:#13203A;--tx:#F1F5F9;--t2:#94A3B8;--bd:#2A3B5C;--ok:#064E3B;--er:#422006;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0B1220;--sf:#13203A;--tx:#F1F5F9;--t2:#94A3B8;--bd:#2A3B5C;--ok:#064E3B;--er:#422006;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.55 Inter,system-ui,-apple-system,"Segoe UI",sans-serif}
+#app{max-width:760px;margin:0 auto;padding:16px}
+header{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+h1{font-size:22px;margin:0;color:var(--p);flex:1}h2{font-size:18px;margin:0 0 4px}h3{margin:0 0 8px;font-size:16px}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 8px rgba(15,23,42,.06)}
+.pill{background:var(--a);color:#0F172A;font-weight:700;border-radius:99px;padding:4px 12px;font-size:14px}
+button{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--bd);background:var(--sf);color:var(--tx);padding:8px 14px;transition:transform .1s}
+button:active{transform:scale(.96)}button:focus-visible{outline:3px solid var(--a);outline-offset:2px}
+.pri{background:var(--p);color:#fff;border-color:var(--p);font-weight:600}.sec{background:var(--s);color:#04201a;border-color:var(--s);font-weight:600}
+.t2{color:var(--t2);font-size:14px}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.lv{width:100%;aspect-ratio:1;border-radius:50%;font-weight:700;padding:0;font-size:13px}.lv.a.n{background:var(--a);color:#0F172A;border-color:var(--a)}.lvs{display:grid;grid-template-columns:repeat(9,1fr);gap:4px;align-items:start}.modal{position:fixed;inset:0;background:rgba(15,23,42,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}.modal[hidden]{display:none}.modal .card{max-width:420px;width:100%;position:relative;margin:0}.x{position:absolute;top:8px;right:8px}.lv.d{background:var(--s);color:#04201a;border-color:var(--s)}.lv.n{background:var(--p);color:#fff;border-color:var(--p)}.lv:disabled{opacity:.45;cursor:not-allowed}
+.lvw{text-align:center;font-size:10px;color:var(--t2);min-width:0;line-height:1.2}
+.meter{height:10px;background:var(--bd);border-radius:9px;overflow:hidden}.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--p),var(--s));transition:width .5s}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+pre{background:#0F172A;color:#E2E8F0;padding:12px;border-radius:12px;overflow-x:auto;font:14px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0}
+.opt{display:block;width:100%;text-align:left;margin:8px 0;padding:12px 14px}.opt:hover{border-color:var(--s)}
+.fb{border-radius:12px;padding:12px;margin-top:12px}.fb.ok{background:var(--ok)}.fb.no{background:var(--er)}
+.board{display:grid;gap:3px;max-width:320px;margin:8px auto}
+.cell{aspect-ratio:1;border-radius:8px;background:var(--bd);display:flex;align-items:center;justify-content:center;font-size:22px}
+.cell.w{background:var(--tx);opacity:.85}.cell.g{background:var(--a)}
+.bot{background:var(--p);color:#fff;width:80%;height:80%;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .25s;font-size:18px}
+.prog{min-height:54px;border:2px dashed var(--bd);border-radius:12px;padding:8px;display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
+.chip{background:var(--p);color:#fff;border-radius:8px;padding:4px 10px;font-weight:700}
+.loop{border:2px solid var(--s);border-radius:10px;padding:4px 6px;display:flex;gap:4px;flex-wrap:wrap;align-items:center;cursor:pointer}.loop.on{background:var(--ok)}
+.ordn{display:inline-block;background:var(--a);color:#0F172A;border-radius:50%;width:24px;height:24px;text-align:center;font-weight:700;margin-right:8px;font-size:14px}
+</style></head><body><div id="app"></div>
+<script>
+const DR=[0,1,0,-1],DC=[1,0,-1,0],AR=["F","L","R"],LB={F:"⬆ Move",L:"↶ Left",R:"↷ Right"};
+const MODS=[["Think Like a Computer","Algorithms: precise steps in the right order"],["Break It Down & Spot Patterns","Decomposition and loops"],["Decisions & Logic","If/else, tracing and variables"],["Your First Real Code","Read, fix and write real code"]];
+let L=[
+{k:"Algorithms",t:"Make a Sandwich",ty:"o",c:"An algorithm is a list of steps in the right order. Computers do exactly what you say, in exactly that order.",q:"Tap the steps in the correct order.",i:["Get two slices of bread","Spread butter on one slice","Add cheese and lettuce","Put the second slice on top","Cut it in half"],h:"What has to be ready before you can add the filling?"},
+{k:"Algorithms",t:"Plant a Seed",ty:"o",c:"Changing the order changes the result. Think about what each step needs before it can happen.",q:"Put the gardening algorithm in order.",i:["Dig a small hole","Place the seed inside","Cover it with soil","Water the soil","Wait for it to grow"],h:"You can’t cover a seed that isn’t in the hole yet."},
+{k:"Algorithms",t:"Robot Walk",ty:"g",c:"A program is a list of commands. Build one for the robot: tap commands, then press Run.",q:"Guide the robot 🤖 to the star ⭐.",map:["S...G"],max:6,par:4,h:"The star is 4 steps to the right. Use Move 4 times."},
+{k:"Algorithms",t:"Turn the Corner",ty:"g",c:"Turning changes the direction the robot faces. Every Move goes in the direction it faces.",q:"Reach the star. Walls are dark squares.",map:["S..","##.","##G"],max:8,par:5,h:"Go right 2, turn right (to face down), then go down 2."},
+{k:"Algorithms",t:"Find the Bug",ty:"m",c:"A bug is a mistake in the instructions. Debugging means finding and fixing it.",q:"Cereal algorithm: 1) Pour milk 2) Get a bowl 3) Pour cereal 4) Eat. What is the bug?",o:["The milk is poured before there is a bowl","Eating is missing","There are too many steps"],a:0,h:"Where would the milk go?",e:"Order matters: get the bowl first!"},
+{k:"Decomposition",t:"Divide the Job",ty:"m",c:"Decomposition means breaking a big problem into small, easy parts.",q:"You are planning a school trip. What is the best way to start?",o:["Do everything at once","Split it into parts: transport, food, schedule, permission slips","Wait and hope it works out"],a:1,h:"Small parts are easier to solve.",e:"Small tasks are easier to solve, assign and check."},
+{k:"Patterns",t:"What Comes Next?",ty:"m",c:"Pattern recognition means spotting what repeats, so you can predict what comes next.",q:"🔴 🔵 🔵 🔴 🔵 🔵 🔴 ❓",o:["🔴","🔵","🟢"],a:1,h:"Find the group that repeats: 🔴🔵🔵.",e:"The group 🔴🔵🔵 repeats, so 🔵 comes next."},
+{k:"Patterns",t:"Loop It",ty:"g",lp:1,c:"A loop repeats a group of commands. Tap 🔁, then tap the commands you want inside it. Tap the loop box to select it.",q:"The star is far away, but you only get 4 blocks!",map:["S.........G"],max:4,par:3,h:"10 steps = a loop repeated 5 times with 2 Moves inside.",},
+{k:"Patterns",t:"Number Patterns",ty:"m",c:"Patterns work with numbers too. Find the rule, then use it.",q:"2, 4, 8, 16, ❓",o:["18","24","32"],a:2,h:"How do you get from 2 to 4, and from 4 to 8?",e:"Each number doubles: 16 × 2 = 32."},
+{k:"Decomposition",t:"Staircase",ty:"g",lp:1,c:"Find the smallest repeating piece of a problem, solve it once, then loop it.",q:"Climb the staircase with only 6 blocks.",map:["S.###","#..##","##..#","###..","####G"],max:6,par:5,h:"One step = Move, Right, Move, Left. Repeat it 4 times."},
+{k:"Algorithms",t:"If … Else",ty:"m",c:"Conditionals let a program choose: IF something is true do one thing, ELSE do another.",q:"IF it is raining THEN take an umbrella, ELSE wear sunglasses. Today is sunny. What do you do?",o:["Take an umbrella","Wear sunglasses","Both"],a:1,h:"Is the condition “it is raining” true?",e:"The condition is false, so the ELSE branch runs."},
+{k:"Algorithms",t:"Trace the Code",ty:"m",c:"Tracing means running code in your head, line by line.",q:"What does this print?",code:"age = 12\nif age >= 13:\n    print(\"Teen\")\nelse:\n    print(\"Kid\")",o:["Teen","Kid","Nothing"],a:1,h:"Is 12 >= 13 true?",e:"12 is not at least 13, so ELSE runs."},
+{k:"Patterns",t:"Loop Output",ty:"m",c:"Loops save typing. Always count how many times they run.",q:"Repeat 3 times: clap. Then: jump. What is the full output?",o:["clap jump","clap clap clap jump","jump clap clap clap"],a:1,h:"The loop finishes before the last step.",e:"3 claps, then 1 jump."},
+{k:"Abstraction",t:"Variables",ty:"m",c:"A variable is a labeled box that stores a value. The value can change.",q:"What is x at the end?",code:"x = 3\nx = x + 2\nx = x * 2",o:["7","10","12"],a:1,h:"Go line by line: 3, then 5, then …",e:"3 → 5 → 10."},
+{k:"Decomposition",t:"L-Shaped Path",ty:"g",lp:1,c:"Combine what you know: loops for repeated moves, turns for corners.",q:"Reach the star with at most 6 blocks.",map:["S....","####.","####.","####.","####G"],max:6,par:5,h:"Repeat Move 4 times, turn right, repeat Move 4 times."},
+{k:"Patterns",t:"Your First Real Loop",ty:"m",c:"In Python, range(3) gives 0, 1, 2. Computers start counting at 0!",q:"What does this print?",code:"for i in range(3):\n    print(i)",o:["0 1 2","1 2 3","0 1 2 3"],a:0,h:"range(3) makes 3 numbers, starting at 0.",e:"i takes the values 0, 1 and 2."},
+{k:"Abstraction",t:"Fill the Gap",ty:"m",c:"Real code has keywords. “for” starts a loop that repeats.",q:"Which word makes this print Hi four times?",code:"___ i in range(4):\n    print(\"Hi\")",o:["for","if","else"],a:0,h:"Which keyword repeats code?",e:"for … in range(4) repeats 4 times."},
+{k:"Algorithms",t:"Debug the Code",ty:"m",c:"Good programmers find bugs by tracing what each variable holds.",q:"This code should print the sum 6 but doesn’t. Why?",code:"total = 0\nfor n in [1, 2, 3]:\n    total = n\nprint(total)",o:["print is in the wrong place","total = n replaces the value instead of adding","The list is wrong"],a:1,h:"After the loop, what is total?",e:"It should be total = total + n."},
+{k:"Decomposition",t:"Snake Path",ty:"g",lp:1,c:"A big path is just small parts combined. Solve each part, then join them.",q:"Follow the snake to the star.",map:["S....","####.",".....",".####","....G"],max:14,par:14,h:"Right 4, turn right, down 2, turn right, left 4, turn left, down 2, turn left, right 4."},
+{k:"Abstraction",t:"Grand Finale",ty:"g",lp:1,c:"Spot the big repeating unit, and one loop will solve the whole puzzle.",q:"Reach the star with at most 8 blocks.",map:["S..####","##.####","##...##","####.##","####...","######.","######G"],max:8,par:7,h:"One unit = Move 2, Right, Move 2, Left. Repeat it 3 times."}
+];
+const O=L,mk=(t,qs)=>({k:"Assessment",ty:"a",t,c:"Show what you learned in this module.",q:"12 questions. Score 8 or more to pass.",qs});
+const X=[
+{k:"Algorithms",t:"Wash Your Hands",ty:"o",c:"Good algorithms leave nothing out. Every step is needed, in the right place.",q:"Put the hand-washing algorithm in order.",i:["Turn on the water","Apply soap","Scrub for 20 seconds","Rinse off the soap","Dry your hands"],h:"Soap needs water first, and drying comes last."},
+{k:"Algorithms",t:"Around the Wall",ty:"g",c:"Combine Moves and Turns to plan a longer route.",q:"Reach the star. Plan the whole route before you run.",map:["S...","###.","###G"],max:8,par:6,h:"Right 3, turn right, then down 2."},
+{k:"Algorithms",t:"Be Precise",ty:"m",c:"Computers can’t guess. Instructions must be exact.",q:"A robot is told “Go to the door.” Why might this fail?",o:["It doesn’t say which way to go or how many steps","Robots can’t open doors","Doors are too heavy"],a:0,h:"What information is missing?",e:"Clear steps (direction + distance) make an algorithm work."},
+{k:"Decomposition",t:"Bake a Cake",ty:"m",c:"Good sub-problems are small, clear jobs that add up to the whole.",q:"Which list breaks “bake a cake” into good sub-tasks?",o:["Make batter, bake it, add frosting","Cake, oven, sugar","Eat, sleep, repeat"],a:0,h:"Sub-tasks are actions, in a sensible order.",e:"Each action is small and clear."},
+{k:"Patterns",t:"Shape Pattern",ty:"m",c:"Look for the smallest group that repeats.",q:"🔺🔺⬛ 🔺🔺⬛ 🔺🔺 ❓",o:["⬛","🔺","🔵"],a:0,h:"The repeating group is 🔺🔺⬛.",e:"Each group ends with ⬛."},
+{k:"Patterns",t:"Double Loop",ty:"g",lp:1,c:"You can use more than one loop in a program.",q:"Reach the star with at most 5 blocks.",map:["S....","####.","####G"],max:5,par:5,h:"Repeat Move 4 times, turn right, then Move twice."},
+{k:"Algorithms",t:"AND Logic",ty:"m",c:"AND needs BOTH conditions to be true. OR needs just one.",q:"IF it is a weekend AND it is sunny, go to the park. It is Saturday, but it is raining. Do you go?",o:["Yes","No"],a:1,h:"Are both conditions true?",e:"Only one condition is true, so AND is false."},
+{k:"Abstraction",t:"Keep Score",ty:"m",c:"Variables can go up and down as the program runs.",q:"What is score at the end?",code:`score = 10\nscore = score - 4\nscore = score + 1`,o:["5","7","15"],a:1,h:"10, then 6, then …",e:"10 → 6 → 7."},
+{k:"Decomposition",t:"Detour",ty:"g",lp:1,c:"Break the path into straight parts and turns.",q:"Reach the star using at most 8 blocks.",map:["S..##","##.##","##..G"],max:8,par:8,h:"Right 2, turn right, down 2, turn left, right 2."},
+{k:"Abstraction",t:"Say It: print",ty:"m",c:"print() shows a result on the screen. Python can do math inside it.",q:"What does this print?",code:`print(2 + 3)`,o:["2 + 3","5","23"],a:1,h:"Python calculates first.",e:"It adds, then prints 5."},
+{k:"Algorithms",t:"If in a Loop",ty:"m",c:"Loops and conditionals can work together.",q:"What does this print?",code:`for i in range(4):\n    if i == 2:\n        print("Two!")`,o:["Two! four times","Two! once","Nothing"],a:1,h:"i is 0, 1, 2, 3. When is it 2?",e:"Only when i is 2."},
+{k:"Abstraction",t:"Functions",ty:"m",c:"A function is a named, reusable group of instructions. That’s abstraction!",q:"What does this print?",code:`def greet(name):\n    print("Hi " + name)\ngreet("Sam")`,o:["Hi name","Hi Sam","greet"],a:1,h:"name holds the value you pass in.",e:"name becomes Sam."}];
+const A=[
+mk("Module 1 Assessment",[
+["Which best describes an algorithm?","",["A step-by-step list of instructions","A type of computer","A mistake in code"],0],
+["Why does the order of steps matter?","",["It doesn’t","Changing the order can break the result","Computers like alphabetical order"],1],
+["Putting on shoes BEFORE socks is an example of…","",["A bug in the order of steps","A loop","A pattern"],0],
+["A robot faces right and gets: Move, Move, Turn Right, Move. Which way does the last Move go?","",["Right","Down","Up"],1],
+["The robot faces right. After Turn Left, which way does it face?","",["Up","Down","Left"],0],
+["Finding and fixing a mistake in a program is called…","",["Debugging","Compiling","Printing"],0],
+["Which instruction is clearer for a computer?","",["Go over there","Move forward 3 steps","Walk a bit"],1],
+["Steps to email: Write message, Click Send, Open email app. Which is out of order?","",["Open email app should come first","Write message","Nothing is wrong"],0],
+["A star is 5 squares to the right. How many Move blocks (no turns) reach it?","",["4","5","6"],1],
+["Which is NOT a good algorithm step?","",["Pour water into the cup","Do the thing","Stir three times"],1],
+["The robot faces down. After Turn Right, which way does it face?","",["Left","Right","Up"],0],
+["Why do computers need exact instructions?","",["They follow steps literally and can’t guess","They are slow","They get bored"],0]]),
+mk("Module 2 Assessment",[
+["Breaking a big problem into smaller parts is called…","",["Decomposition","Deletion","Duplication"],0],
+["Which is a smaller sub-task of “organize a party”?","",["Send the invitations","Have fun","The party"],0],
+["🟢🟡🟡 🟢🟡🟡 🟢 ❓","",["🟡","🟢","🔴"],0],
+["3, 6, 9, 12, ❓","",["14","15","16"],1],
+["A loop is used to…","",["Repeat commands","Stop the program","Delete code"],0],
+["Move ×6 in a row can be shortened to…","",["Repeat 6 × Move","Repeat 2 × Move","Move 3"],0],
+["Repeat 3 times [Move, Turn Right]. How many commands run in total?","",["3","5","6"],2],
+["10, 8, 6, 4, ❓","",["3","2","0"],1],
+["Why look for repeating parts in a problem?","",["Solve them once, then loop them","To make it longer","To avoid thinking"],0],
+["Which sequence follows the rule “add 5”?","",["5, 10, 15, 20","5, 10, 20, 40","5, 7, 9, 11"],0],
+["A staircase goes right, down, right, down… The repeating unit is…","",["Move, Turn Right, Move, Turn Left","Move, Move, Move","Only turns"],0],
+["A B B A B B A ❓","",["B","A","C"],0]]),
+mk("Module 3 Assessment",[
+["IF score is 50 or more THEN print Pass, ELSE print Retry. Score is 45. Output?","",["Pass","Retry","Nothing"],1],
+["What does this print?",`n = 5\nif n % 2 == 0:\n    print("even")\nelse:\n    print("odd")`,["even","odd","5"],1],
+["Repeat 4 times: “hop”. Then “stop”. How many “hop” appear?","",["3","4","5"],1],
+["What is x at the end?",`x = 4\nx = x * 3\nx = x - 2`,["10","12","14"],0],
+["IF it is cold AND raining, wear a coat. It is cold but not raining. Coat?","",["Yes","No"],1],
+["A variable is best described as…","",["A named box that stores a value","A loop","A bug"],0],
+["What does this print?",`a = 2\nb = 3\na = b\nprint(a)`,["2","3","5"],1],
+["IF it is a weekday OR a holiday, set an alarm. It is a Sunday, not a holiday. Alarm?","",["Yes","No"],1],
+["For “if x > 5”, the ELSE branch runs when…","",["x > 5 is false","x > 5 is true","Always"],0],
+["What does this print?",`total = 0\nfor i in range(3):\n    total = total + 2\nprint(total)`,["2","6","8"],1],
+["Repeat 2 × [Move, Move], Turn Right, Move. How many Moves in total?","",["4","5","6"],1],
+["Why is tracing code line by line useful?","",["It helps predict output and find bugs","It makes code faster","It deletes errors"],0]]),
+mk("Module 4 Assessment",[
+["What does this print?",`print(4 + 1)`,["4 + 1","5","41"],1],
+["What does this do?",`for i in range(2):\n    print("Go")`,["Prints Go once","Prints Go twice","Prints Go three times"],1],
+["Which keyword starts a loop in Python?","",["for","print","def"],0],
+["What does this print?",`x = 1\nfor i in range(3):\n    x = x + 1\nprint(x)`,["3","4","5"],1],
+["What does this do?",`for i in range(3):\n    if i == 1:\n        print("one")`,["Prints one once","Prints one three times","Prints nothing"],0],
+["What does this print?",`def hello():\n    print("Hi")\nhello()\nhello()`,["Hi once","Hi twice","Nothing"],1],
+["A function is…","",["A reusable named group of instructions","A kind of bug","A number"],0],
+["What does this print?",`total = 0\nfor n in [2, 4]:\n    total = total + n\nprint(total)`,["6","4","2"],0],
+["What numbers does range(4) give?","",["0, 1, 2, 3","1, 2, 3, 4","0, 1, 2, 3, 4"],0],
+["What is the bug here?",`prnt("Hello")`,["prnt should be print","Hello needs no quotes","Nothing is wrong"],0],
+["In the robot snake puzzle, what makes the program shorter?","",["Using loops for repeated Moves","Adding more turns","Removing the goal"],0],
+["The best way to start a big coding problem is to…","",["Break it into small parts","Write all the code at once","Skip testing"],0]])];
+L=[O[0],O[1],X[0],O[2],O[3],X[1],O[4],X[2],A[0],O[5],O[6],X[3],O[7],X[4],O[8],X[5],O[9],A[1],O[10],O[11],X[6],O[12],O[13],X[7],X[8],O[14],A[2],X[9],O[15],O[16],X[10],O[17],X[11],O[18],O[19],A[3]];
+let nn=0;L.forEach(l=>l.n=l.ty=="a"?0:++nn);
+function aq(){const l=L[cur],q=st.q|0;if(q>=12)return"";const x=l.qs[q];return `<p class="t2">Question ${q+1} of 12</p><div class="meter"><i style="width:${q/12*100}%"></i></div><h3 style="margin-top:12px">${x[0]}</h3>${x[1]?`<pre>${x[1]}</pre>`:""}${x[2].map((o,j)=>`<button class="opt" onclick="ans(${j})">${o}</button>`).join("")}`}
+function ans(j){const x=L[cur].qs[st.q|0];if(j==x[3])st.sc=(st.sc|0)+1;else(st.ms=st.ms||[]).push(((st.q|0)+1)+". "+x[0]+" → "+x[2][x[3]]);st.q=(st.q|0)+1;st.q>=12?aend():draw()}
+function aend(){const l=L[cur],sc=st.sc|0,ok=sc>=8,s=sc>=11?3:sc>=9?2:1,last=cur>=L.length-1;if(ok){if(!S.done[cur])S.xp+=20*s;S.done[cur]=Math.max(S.done[cur]||0,s);save()}
+app.innerHTML=`<header><button onclick="home()" aria-label="Back">←</button><h1>${l.t}</h1></header><div class="card"><h2>${ok?"🎉 Passed!":"Keep going!"} ${sc}/12 ${ok?stars(s):""}</h2><p>${ok?(last?"You finished the whole course!":"Next module unlocked."):"You need 8 correct answers to pass. Review the levels and try again."}</p>${st.ms&&st.ms.length?`<h3>Review</h3>${st.ms.map(m=>`<p class="t2">${m}</p>`).join("")}`:""}<div class="row">${ok&&!last?`<button class="pri" onclick="play(${cur+1})">Next module →</button>`:""}${ok?"":`<button class="pri" onclick="play(${cur})">Try again</button>`}<button onclick="home()">Home</button></div></div>`}
+L.forEach(l=>{if(l.ty=="g"){l.map.forEach((r,y)=>{const x=r.indexOf("S");if(x>-1)l.s=[y,x,0]})}});
+let S={done:{},xp:0},cur=0,st={};
+try{const x=JSON.parse(localStorage.getItem("cs2"));if(x&&x.done)S=x}catch(e){}
+const save=()=>{try{localStorage.setItem("cs2",JSON.stringify(S))}catch(e){}};
+const app=document.getElementById("app");
+const stars=n=>"★".repeat(n||0)+"☆".repeat(3-(n||0));
+function theme(){const r=document.documentElement;const d=r.dataset.theme?r.dataset.theme=="dark":matchMedia("(prefers-color-scheme:dark)").matches;r.dataset.theme=d?"light":"dark"}
+function home(){
+  const sk={};L.forEach((l,i)=>{if(l.ty=="a")return;sk[l.k]=sk[l.k]||[0,0];sk[l.k][1]++;if(S.done[i])sk[l.k][0]++});
+  const nxt=L.findIndex((_,i)=>!S.done[i]),n=Object.keys(S.done).length;
+  app.innerHTML=`<header><h1>🌱 CodeSprout</h1><span class="pill">⚡ ${S.xp} XP</span><button onclick="skp.hidden=false" aria-label="Thinking skills">🧠 Skills</button><button onclick="theme()" aria-label="Toggle theme">🌓</button></header>
+  <div class="card"><h2>Learn to think like a coder</h2><p class="t2">32 levels and 4 assessments, from your first algorithm to real code. ${n}/${L.length} complete.</p><div class="meter"><i style="width:${n/L.length*100}%"></i></div><p><button class="pri" onclick="play(${nxt<0?0:nxt})">${n==0?"Start learning":nxt<0?"Replay level 1":"Continue: level "+(nxt+1)}</button></p></div>
+  <div id="skp" class="modal" hidden onclick="if(event.target==this)this.hidden=true"><div class="card"><button class="x" onclick="skp.hidden=true" aria-label="Close">✕</button><h3>Your thinking skills</h3><div class="grid2">${Object.entries(sk).map(([k,[a,b]])=>`<div><div class="row t2" style="justify-content:space-between"><span>${k}</span><span>${a}/${b}</span></div><div class="meter"><i style="width:${a/b*100}%"></i></div></div>`).join("")}</div></div></div>
+  ${MODS.map((m,mi)=>`<div class="card"><h2>Module ${mi+1}: ${m[0]}</h2><p class="t2">${m[1]}</p><div class="lvs">${L.slice(mi*9,mi*9+9).map((l,j)=>{const i=mi*9+j,ok=S.done[i],open=i==0||S.done[i-1];return `<div class="lvw"><button class="lv ${l.ty=="a"?"a ":""}${ok?"d":open?"n":""}" ${open?"":"disabled"} onclick="play(${i})" title="${l.t}" aria-label="${l.t}">${ok?"✓":open?(l.ty=="a"?"📝":l.n):"🔒"}</button><div>${ok?stars(ok):"&nbsp;"}</div></div>`}).join("")}</div></div>`).join("")}
+  <p class="t2"><button onclick="if(confirm('Reset all progress?')){S={done:{},xp:0};save();home()}">Reset progress</button></p>`;
+}
+function play(i){cur=i;const l=L[i];st={ord:[],prog:[],tgt:null,tries:0,pos:null,run:0,fin:0};
+  const pool=l.ty=="o"?l.i.map((x,j)=>j).sort((a,b)=>((a*3)%5)-((b*3)%5)):[];st.pool=pool;draw()}
+function draw(){const l=L[cur];let body="";
+  if(l.ty=="o"){body=`<div class="card"><h3>Your order</h3>${st.ord.map((j,n)=>`<div><span class="ordn">${n+1}</span>${l.i[j]}</div>`).join("")||'<p class="t2">Tap the steps below.</p>'}</div>`+st.pool.filter(j=>!st.ord.includes(j)).map(j=>`<button class="opt" onclick="pick(${j})">${l.i[j]}</button>`).join("")+`<div class="row"><button class="pri" onclick="chkO()" ${st.ord.length<l.i.length?"disabled":""}>Check</button><button onclick="st.ord=[];draw()">Reset</button></div>`}
+  if(l.ty=="m"){body=(l.code?`<pre>${l.code.replace(/</g,"&lt;")}</pre>`:"")+l.o.map((o,j)=>`<button class="opt" onclick="chkM(${j})" ${st.fin?"disabled":""}>${o}</button>`).join("")}
+  if(l.ty=="a")body=aq();
+  if(l.ty=="g"){body=`<div id="gr"></div><p class="t2" style="text-align:center">Blocks used: <b id="bc"></b> / ${l.max}</p><div class="row" style="justify-content:center">${AR.map(c=>`<button class="pri" onclick="add('${c}')">${LB[c]}</button>`).join("")}${l.lp?[2,3,4,5].map(n=>`<button class="sec" onclick="add(${n})">🔁 ×${n}</button>`).join(""):""}</div><h3 style="margin-top:12px">Your program</h3><div class="prog" id="pg"></div><div class="row" style="margin-top:10px"><button class="pri" onclick="run()">▶ Run</button><button onclick="undo()">⌫ Undo</button><button onclick="st.prog=[];st.tgt=null;st.pos=null;gdraw()">Clear</button></div>`}
+  app.innerHTML=`<header><button onclick="home()" aria-label="Back">←</button><h1>${l.ty=="a"?"":"Level "+l.n+": "}${l.t}</h1><span class="pill">${l.k}</span></header><div class="card"><p class="t2">💡 ${l.c}</p><h3>${l.q}</h3>${body}<div id="fb" aria-live="polite"></div></div>`;
+  if(l.ty=="g")gdraw()}
+const pick=j=>{st.ord.push(j);draw()};
+function chkO(){const l=L[cur];st.ord.every((j,n)=>j==n)?win(l.i.length?"Perfect order!":""):fail("Not quite right.")}
+function chkM(j){const l=L[cur];j==l.a?(st.fin=1,win(l.e)):fail("Not quite. Try another answer.")}
+function fail(m){st.tries++;const l=L[cur];document.getElementById("fb").innerHTML=`<div class="fb no"><b>${m}</b><br>💡 Hint: ${l.h}<br><span class="t2">Mistakes are how programmers learn!</span></div>`}
+function win(m){const s=Math.max(1,3-st.tries);if(!S.done[cur])S.xp+=10*s;S.done[cur]=Math.max(S.done[cur]||0,s);save();st.fin=1;
+  document.getElementById("fb").innerHTML=`<div class="fb ok"><b>🎉 Level complete! ${stars(s)}</b><br>${m||""}<div class="row" style="margin-top:10px">${cur<L.length-1?`<button class="pri" onclick="play(${cur+1})">Next level →</button>`:"<b>🏆 You finished all 32 levels!</b>"}<button onclick="home()">Home</button></div></div>`}
+const flat=p=>p.flatMap(i=>i.b?Array(i.n).fill(i.b).flat():[i]);
+const cnt=p=>p.reduce((s,i)=>s+(i.b?1+i.b.length:1),0);
+function add(c){const l=L[cur];if(st.run)return;st.pos=null;
+  if(cnt(st.prog)>=l.max){document.getElementById("fb").innerHTML=`<div class="fb no">You’ve used all ${l.max} blocks. Try a loop or fewer steps!</div>`;return}
+  document.getElementById("fb").innerHTML="";
+  if(typeof c=="number"){st.prog.push({n:c,b:[]});st.tgt=st.prog.length-1}else if(st.tgt!=null)st.prog[st.tgt].b.push(c);else st.prog.push(c);gdraw()}
+function undo(){if(st.run)return;st.pos=null;if(st.tgt!=null){const lp=st.prog[st.tgt];lp.b.length?lp.b.pop():(st.prog.splice(st.tgt,1),st.tgt=null)}else st.prog.pop();gdraw()}
+function gdraw(){const l=L[cur],m=l.map,pos=st.pos||l.s;
+  document.getElementById("gr").innerHTML=`<div class="board" style="grid-template-columns:repeat(${m[0].length},1fr)">${m.map((r,y)=>[...r].map((ch,x)=>`<div class="cell ${ch=="#"?"w":ch=="G"?"g":""}">${pos[0]==y&&pos[1]==x?`<div class="bot" style="transform:rotate(${pos[2]*90}deg)">➤</div>`:ch=="G"?"⭐":""}</div>`).join("")).join("")}</div>`;
+  document.getElementById("bc").textContent=cnt(st.prog);
+  document.getElementById("pg").innerHTML=(st.tgt!=null?`<button onclick="st.tgt=null;gdraw()">↩ Back to main</button>`:"")+st.prog.map((i,n)=>i.b?`<div class="loop ${st.tgt==n?"on":""}" onclick="st.tgt=${n};gdraw()" title="Select this loop">🔁×${i.n} ${i.b.map(c=>`<span class="chip">${LB[c]}</span>`).join("")||'<span class="t2">add commands</span>'}</div>`:`<span class="chip">${LB[i]}</span>`).join("")||'<span class="t2">Tap commands above</span>'}
+function run(){if(st.run||st.fin)return;const l=L[cur],seq=flat(st.prog);let [r,c,d]=l.s,path=[[r,c,d]],err="";
+  if(!seq.length){document.getElementById("fb").innerHTML='<div class="fb no">Add some commands first.</div>';return}
+  for(const x of seq){if(x=="L")d=(d+3)%4;else if(x=="R")d=(d+1)%4;else{const nr=r+DR[d],nc=c+DC[d];if(!l.map[nr]||!l.map[nr][nc]||l.map[nr][nc]=="#"){err="Ouch! The robot bumped into a wall.";break}r=nr;c=nc}path.push([r,c,d])}
+  let k=0;st.run=1;document.getElementById("fb").innerHTML="";
+  const t=setInterval(()=>{st.pos=path[k];gdraw();if(++k>=path.length){clearInterval(t);st.run=0;
+    const e=path[path.length-1];
+    if(!err&&l.map[e[0]][e[1]]=="G"){const ok=cnt(st.prog)<=l.par;win(ok?"Efficient solution!":"Solved! Can you do it in fewer blocks ("+l.par+")?")}else fail(err||"The robot didn’t reach the star.")}},320)}
+home();
+</script></body></html>
